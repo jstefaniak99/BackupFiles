@@ -10,7 +10,7 @@ pipeline {
 
         stage('Set up Python') {
             steps {
-                sh '''
+                bat '''
                 python3 --version
                 pip install --upgrade pip
                 '''
@@ -19,7 +19,7 @@ pipeline {
 
         stage('Run File Copy Script') {
             steps {
-                sh 'python3 backupFiles.py'
+                bat 'python3 backupFiles.py'
             }
         }
     }
