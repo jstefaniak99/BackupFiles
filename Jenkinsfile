@@ -2,22 +2,37 @@ pipeline {
     agent any
 
     stages {
-        stage('Check Branch') {
+        stage('Checkout Code') {
             steps {
-                script {
-                    def branchName = env.BRANCH_NAME
-
-                    // Sprawdzenie, czy commit nie idzie do /main
-                    if (branchName == 'main') {
-                        echo "Commit został zignorowany: nie można bezpośrednio commitować do /main!"
-                        currentBuild.result = 'ABORTED'
-                        return
-                    } else {
-                        echo "Commit został skierowany do poprawnego brancha"
-                    }
-                }
+                checkout scm
             }
         }
 
+        stage('Set up Python') {
+            steps {
+                sh '''
+                python3 --version
+                pip install --upgrade pip
+                '''
+            }
+        }
+
+        stage('Run File Copy Script') {
+            steps {
+                sh 'python3 backupFiles.py'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline zakończony.'
+        }
+        success {
+            echo 'Kopiowanie plików zakończone pomyślnie!'
+        }
+        failure {
+            echo 'Coś poszło nie tak. Sprawdź logi!'
+        }
     }
 }
