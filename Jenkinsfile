@@ -2,37 +2,18 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-
-        stage('Set up Python') {
+        
+        stage('List branches') {
             steps {
-                bat '''
-                python3 --version
-                pip install --upgrade pip
-                '''
+                script {
+                    sh 'git branch -r'
+                }
             }
-        }
-
-        stage('Run File Copy Script') {
-            steps {
-                bat 'python3 backupFiles.py'
-            }
-        }
-    }
-
-    post {
-        always {
-            echo 'Pipeline zakończony.'
-        }
-        success {
-            echo 'Kopiowanie plików zakończone pomyślnie!'
-        }
-        failure {
-            echo 'Coś poszło nie tak. Sprawdź logi!'
         }
     }
 }
